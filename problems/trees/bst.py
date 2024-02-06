@@ -22,6 +22,9 @@ class Empty:
     def insert(self, n):
         return Node(n, Empty(), Empty())
 
+    def inorder(self):
+        return []
+
 
 class Node:
 
@@ -58,9 +61,41 @@ class Node:
         else:
             return self
 
+    def inorder(self):
+        if self.is_leaf():
+            return [self.value]
+        else:
+            return self.left.inorder() + [self.value] + self.right.inorder()
+
+    def add_to_all(self, num):
+        tree = self
+        tree.value += num
+        if not tree.right.is_empty():
+            tree.right.add_to_all(num)
+        if not tree.left.is_empty():
+            tree.left.add_to_all(num)
+        return tree
+
+    def path_to_list(self, num):
+        if num == self.value:
+            return [self.value]
+        elif num < self.value and not self.left.is_empty():
+            return [self.value] + self.left.path_to_list(num)
+        elif num > self.value and not self.right.is_empty():
+            return [self.value] + self.right.path_to_list(num)
+        else:
+            return []
+
+    def path_to(self, num):
+        list = self.path_to_list(num)
+        return " ".join(str(x) for x in list)
 
 if __name__ == "__main__":
     bst = Empty().insert(42).insert(10).insert(15).insert(63)
 
     print(f"The number of nodes is {bst.num_nodes()}")
     print(f"The height is {bst.height()}")
+    print(f"The values in order are: {bst.inorder()}")
+    bst_new = bst.add_to_all(1)
+    print(f"New values: {bst_new.inorder()}")
+    print(f"Path to 63: {bst.path_to(64)}")
